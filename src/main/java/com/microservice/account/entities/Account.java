@@ -21,6 +21,6 @@ public class Account {
     @Field("account_number")
     private String accountNumber;
 
-    @Field("account_type")
-    private ObjectId accountType;
+    @Field("account_type_id")
+    private ObjectId accountTypeId;
 }

@@ -21,7 +21,7 @@ public class AccountType {
     @Field("max_transactions_per_month")
     private Integer maxTransactionsPerMonth;
 
-    @Field("product_type")
+    @Field("product_type_id")
     private ObjectId productType;
 
 }
