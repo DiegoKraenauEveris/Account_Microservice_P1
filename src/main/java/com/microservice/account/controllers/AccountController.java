@@ -2,7 +2,7 @@ package com.microservice.account.controllers;
 
 import com.microservice.account.entities.dtos.CreateAccountDto;
 import com.microservice.account.entities.dtos.ResponseAccountDto;
-import com.microservice.account.services.AccountService;
+import com.microservice.account.services.IAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 public class AccountController {
 
     @Autowired
-    AccountService accountService;
+    IAccountService accountService;
 
     @PostMapping()
     public ResponseAccountDto createAccount(@Validated @RequestBody CreateAccountDto dto) throws  Exception{

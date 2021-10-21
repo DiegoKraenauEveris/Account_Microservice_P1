@@ -4,14 +4,13 @@ import com.microservice.account.client.CustomerServiceClient;
 import com.microservice.account.entities.dtos.CreateAccountDto;
 import com.microservice.account.entities.dtos.ResponseAccountDto;
 import com.microservice.account.entities.dtos.ResponseCustomerDto;
-import com.microservice.account.services.AccountService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
-public class IAccountService implements AccountService {
+public class AccountServiceImpl implements com.microservice.account.services.IAccountService {
 
     @Autowired
     private CustomerServiceClient customerClient;
