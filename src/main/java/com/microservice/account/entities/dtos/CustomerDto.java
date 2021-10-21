@@ -15,5 +15,5 @@ public class CustomerDto {
 
     private String dni;
 
-    private String customerType;
+    private CustomerType type;
 }

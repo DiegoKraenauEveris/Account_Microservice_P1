@@ -3,19 +3,14 @@ package com.microservice.account.entities.dtos;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.bson.types.ObjectId;
+
+import javax.validation.constraints.NotEmpty;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ResponseCustomerDto {
-    private ObjectId _id;
+public class CustomerType {
 
+    @NotEmpty
     private String name;
-
-    private String lastName;
-
-    private String dni;
-
-    private CustomerType type;
 }
