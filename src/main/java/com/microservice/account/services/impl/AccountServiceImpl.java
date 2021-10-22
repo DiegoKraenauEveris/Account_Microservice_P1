@@ -4,13 +4,11 @@ import com.microservice.account.client.CustomerServiceClient;
 import com.microservice.account.config.AppConfig;
 import com.microservice.account.entities.Account;
 import com.microservice.account.entities.AccountType;
-import com.microservice.account.entities.dtos.CreateAccountDto;
-import com.microservice.account.entities.dtos.CustomerDto;
-import com.microservice.account.entities.dtos.ResponseAccountDto;
-import com.microservice.account.entities.dtos.ResponseCustomerDto;
+import com.microservice.account.entities.dtos.*;
 import com.microservice.account.repositories.IAccountRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +29,8 @@ public class AccountServiceImpl implements com.microservice.account.services.IAc
 
     @Autowired
     private  AppConfig appConfig;
+
+    public static final ModelMapper modelMapper=new ModelMapper();
 
     private String createRandomAccountNumber(){
         Random rand = new Random();
@@ -97,10 +97,33 @@ public class AccountServiceImpl implements com.microservice.account.services.IAc
     }
 
     @Override
-    public Account findAccountByAccountNumber(String accountNumber) throws Exception {
+    public ResponseAccountDto findAccountByAccountNumber(String accountNumber) throws Exception {
+
         Account account = accountRepository.findAccountByAccountNumber(accountNumber)
                 .orElseThrow(() -> new Exception("ACCOUNT_NOT_FOUND"));
-        System.out.println(account.getCustomersIds().get(0));
-        return account;
+        ResponseAccountDto response =  modelMapper.map(account,ResponseAccountDto.class);
+        return response;
+    }
+
+    @Override
+    public ResponseAccountDto updateAmount(TransactionDto dto, String accountId) throws Exception {
+        //Validate that account exists
+        Account account = accountRepository.findById(new ObjectId(accountId))
+                .orElseThrow(()->new Exception("ACCOUNT_NOT_FOUND"));
+        //Update amount
+        switch (dto.getTransactionType()){
+            case "DEPOSITO":
+                account.setBalance(account.getBalance() + dto.getAmount());
+                accountRepository.save(account);
+                break;
+            case "RETIRO":
+                account.setBalance(account.getBalance() - dto.getAmount());
+                accountRepository.save(account);
+                break;
+        }
+
+        ResponseAccountDto response = modelMapper.map(account,ResponseAccountDto.class);
+
+        return response;
     }
 }

@@ -3,6 +3,7 @@ package com.microservice.account.controllers;
 import com.microservice.account.entities.Account;
 import com.microservice.account.entities.dtos.CreateAccountDto;
 import com.microservice.account.entities.dtos.ResponseAccountDto;
+import com.microservice.account.entities.dtos.TransactionDto;
 import com.microservice.account.services.IAccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -23,8 +24,13 @@ public class AccountController {
     }
 
     @GetMapping(value = "findByAccountNumber/{accountNumber}")
-    public Account createAccount(@PathVariable String accountNumber) throws  Exception{
+    public ResponseAccountDto findAccountByAccountNumber(@PathVariable String accountNumber) throws  Exception{
         return accountService.findAccountByAccountNumber(accountNumber);
+    }
+
+    @PutMapping(value = "updateAmount/{accountId}")
+    public ResponseAccountDto updateAmount(@Validated @RequestBody TransactionDto dto, @PathVariable String accountId) throws  Exception{
+        return accountService.updateAmount(dto,accountId);
     }
 
 }
