@@ -1,5 +1,6 @@
 package com.microservice.account.controllers;
 
+import com.microservice.account.entities.Account;
 import com.microservice.account.entities.dtos.CreateAccountDto;
 import com.microservice.account.entities.dtos.ResponseAccountDto;
 import com.microservice.account.services.IAccountService;
@@ -20,4 +21,10 @@ public class AccountController {
     public ResponseAccountDto createAccount(@Validated @RequestBody CreateAccountDto dto) throws  Exception{
         return accountService.createAccount(dto);
     }
+
+    @GetMapping(value = "findByAccountNumber/{accountNumber}")
+    public Account createAccount(@PathVariable String accountNumber) throws  Exception{
+        return accountService.findAccountByAccountNumber(accountNumber);
+    }
+
 }

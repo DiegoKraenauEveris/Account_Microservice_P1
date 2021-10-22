@@ -12,11 +12,7 @@ import com.microservice.account.repositories.IAccountRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -98,5 +94,13 @@ public class AccountServiceImpl implements com.microservice.account.services.IAc
         }
 
         return null;
+    }
+
+    @Override
+    public Account findAccountByAccountNumber(String accountNumber) throws Exception {
+        Account account = accountRepository.findAccountByAccountNumber(accountNumber)
+                .orElseThrow(() -> new Exception("ACCOUNT_NOT_FOUND"));
+        System.out.println(account.getCustomersIds().get(0));
+        return account;
     }
 }
