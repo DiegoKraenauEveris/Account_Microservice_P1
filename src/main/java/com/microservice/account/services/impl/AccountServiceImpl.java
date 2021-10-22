@@ -5,6 +5,7 @@ import com.microservice.account.config.AppConfig;
 import com.microservice.account.entities.Account;
 import com.microservice.account.entities.AccountType;
 import com.microservice.account.entities.dtos.CreateAccountDto;
+import com.microservice.account.entities.dtos.CustomerDto;
 import com.microservice.account.entities.dtos.ResponseAccountDto;
 import com.microservice.account.entities.dtos.ResponseCustomerDto;
 import com.microservice.account.repositories.IAccountRepository;
@@ -13,6 +14,9 @@ import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,23 +67,19 @@ public class AccountServiceImpl implements com.microservice.account.services.IAc
         });
 
         //Add new customers
-        List<ResponseCustomerDto> finalCustomers = customers;
+        List<CustomerDto> customersMissing = new ArrayList<>();
         dto.getCustomers().forEach(customer->{
             if(!dnis.contains(customer.getDni())){
-                System.out.println(customer.getType().getName());
-                ResponseCustomerDto customerDto = customerClient.createCustomer(customer);
-                finalCustomers.add(customerDto);
+                customersMissing.add(customer);
             }
         });
+        customers.addAll(customerClient.createCustomers(customersMissing));
 
         //Get customers ids after save
         List<ObjectId> ids = new ArrayList<>();
-        finalCustomers.forEach(finalCustomer->{
+        customers.forEach(finalCustomer->{
             ids.add(finalCustomer.get_id());
         });
-
-        //El cliente PERSONAL debe tener solamente una cuenta de ahorro,corriente o plazo fijo
-
 
         //Create account
         Optional<AccountType> accTypeOptional = appConfig.getAccountTypeByName(dto.getAccount().getType());

@@ -28,11 +28,25 @@ public class CustomerServiceClient {
     private AccountServiceConfig config;
 
 
-    public ResponseCustomerDto createCustomer(CustomerDto dto){
-        System.out.println(dto);
-        ResponseEntity<ResponseCustomerDto> responseCustomer = restTemplate.postForEntity(config.getCustomerServiceUrl(),dto,ResponseCustomerDto.class);
-        log.info("Response:" + responseCustomer.getHeaders());
-        return responseCustomer.getBody();
+//    public ResponseCustomerDto createCustomer(CustomerDto dto){
+//        System.out.println(dto);
+//        ResponseEntity<ResponseCustomerDto> responseCustomer = restTemplate.postForEntity(config.getCustomerServiceUrl(),dto,ResponseCustomerDto.class);
+//        log.info("Response:" + responseCustomer.getHeaders());
+//        return responseCustomer.getBody();
+//    }
+
+    public List<ResponseCustomerDto> createCustomers(List<CustomerDto> dtos){
+        List<ResponseCustomerDto> result = new ArrayList<>();
+        //Heders
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        //Content
+        HttpEntity<Object> requestEntity = new HttpEntity<Object>(dtos,headers);
+        result =  restTemplate.exchange(config.getCustomerServiceUrl()+"/createCustomers",
+                HttpMethod.POST, requestEntity, new ParameterizedTypeReference<List<ResponseCustomerDto>>() {
+                }).getBody();
+        log.info("Response:" + requestEntity.getHeaders());
+        return result;
     }
 
     public List<ResponseCustomerDto> findCustomerByDni(List<String> dnis){
