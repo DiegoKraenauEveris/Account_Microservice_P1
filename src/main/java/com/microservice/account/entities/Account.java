@@ -25,8 +25,11 @@ public class Account {
     @Field("account_number")
     private String accountNumber;
 
-    @Field("customer_ids")
+    @Field("customers_ids")
     private List<ObjectId> customersIds;
+
+    @Field("signers_ids")
+    private List<ObjectId> signerIds;
 
     @Field("account_type")
     private AccountType accountType;

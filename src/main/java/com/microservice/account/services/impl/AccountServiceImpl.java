@@ -82,6 +82,16 @@ public class AccountServiceImpl implements com.microservice.account.services.IAc
             ids.add(finalCustomer.get_id());
         });
 
+        //Add new signers
+        List<ResponseSignerDto> signers = new ArrayList<>();
+        signers = customerClient.createSigners(dto.getSigners());
+
+        //Gte signers ids after save
+        List<ObjectId> signersIds = new ArrayList<>();
+        signers.forEach(finalSigner->{
+            signersIds.add(finalSigner.get_id());
+        });
+
         //Create account
         Optional<AccountType> accTypeOptional = appConfig.getAccountTypeByName(dto.getAccount().getType());
 
@@ -91,14 +101,16 @@ public class AccountServiceImpl implements com.microservice.account.services.IAc
                     .balance(0.00)
                     .accountNumber(createRandomAccountNumber())
                     .customersIds(ids)
+                    .signerIds(signersIds)
                     .accountType(accountType)
                     .build();
             account = accountRepository.save(account);
+
+            ResponseAccountDto response = modelMapper.map(account,ResponseAccountDto.class);
+            return  response;
         }else{
             throw new Exception("ACC_TYPE_NOT_FOUND");
         }
-
-        return null;
     }
 
     @Override
@@ -134,14 +146,18 @@ public class AccountServiceImpl implements com.microservice.account.services.IAc
 
     @Override
     @Transactional
-    public List<TransactionDto> consultAccount(String accountNumber) throws Exception {
+    public ConsultAccountDto consultAccount(String accountNumber) throws Exception {
         Account account = accountRepository.findAccountByAccountNumber(accountNumber)
                 .orElseThrow(()->new Exception("ACCOUNT_NOT_FOUND"));
 
         //Get transactions
         List<TransactionDto> transactions = transactionClient.findTransactionsByAccountId(account.get_id().toString());
+        ConsultAccountDto response = ConsultAccountDto.builder()
+                .balance(account.getBalance())
+                .transactions(transactions)
+                .build();
 
-        return  transactions;
+        return  response;
 
     }
 }

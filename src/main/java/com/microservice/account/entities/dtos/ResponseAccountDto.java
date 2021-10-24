@@ -23,6 +23,8 @@ public class ResponseAccountDto {
 
     private List<String> customersIds;
 
+//    private List<String> signersIds;
+
     private AccountType accountType;
 
 }

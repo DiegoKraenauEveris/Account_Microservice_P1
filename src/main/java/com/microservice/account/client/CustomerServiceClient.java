@@ -3,6 +3,8 @@ package com.microservice.account.client;
 import com.microservice.account.config.AccountServiceConfig;
 import com.microservice.account.entities.dtos.CustomerDto;
 import com.microservice.account.entities.dtos.ResponseCustomerDto;
+import com.microservice.account.entities.dtos.ResponseSignerDto;
+import com.microservice.account.entities.dtos.SignerDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -48,6 +50,21 @@ public class CustomerServiceClient {
         log.info("Response:" + requestEntity.getHeaders());
         return result;
     }
+
+    public List<ResponseSignerDto> createSigners(List<SignerDto> dtos){
+        List<ResponseSignerDto> result = new ArrayList<>();
+        //Heders
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        //Content
+        HttpEntity<Object> requestEntity = new HttpEntity<Object>(dtos,headers);
+        result =  restTemplate.exchange(config.getCustomerServiceUrl()+"/createSigners",
+                HttpMethod.POST, requestEntity, new ParameterizedTypeReference<List<ResponseSignerDto>>() {
+                }).getBody();
+        log.info("Response:" + requestEntity.getHeaders());
+        return result;
+    }
+
 
     public List<ResponseCustomerDto> findCustomerByDni(List<String> dnis){
         List<ResponseCustomerDto> result = new ArrayList<>();

@@ -3,17 +3,17 @@ package com.microservice.account.entities.dtos;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
+import org.bson.types.ObjectId;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreateAccountDto {
+public class ResponseSignerDto {
+    private ObjectId _id;
 
-    private List<CustomerDto> customers;
+    private String name;
 
-    private AccountDto account;
+    private String lastName;
 
-    private List<SignerDto> signers;
+    private String dni;
 }

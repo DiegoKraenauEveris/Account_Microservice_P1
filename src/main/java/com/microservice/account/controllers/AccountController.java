@@ -1,6 +1,7 @@
 package com.microservice.account.controllers;
 
 import com.microservice.account.entities.Account;
+import com.microservice.account.entities.dtos.ConsultAccountDto;
 import com.microservice.account.entities.dtos.CreateAccountDto;
 import com.microservice.account.entities.dtos.ResponseAccountDto;
 import com.microservice.account.entities.dtos.TransactionDto;
@@ -36,7 +37,7 @@ public class AccountController {
     }
 
     @GetMapping("consultAccountByAccountNumber/{accountNumber}")
-    public List<TransactionDto> consultAccount(@PathVariable String accountNumber) throws  Exception{
+    public ConsultAccountDto consultAccount(@PathVariable String accountNumber) throws  Exception{
         return accountService.consultAccount(accountNumber);
     }
 

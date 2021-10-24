@@ -4,16 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreateAccountDto {
+public class SignerDto {
+    private String name;
 
-    private List<CustomerDto> customers;
+    private String lastName;
 
-    private AccountDto account;
-
-    private List<SignerDto> signers;
+    private String dni;
 }
