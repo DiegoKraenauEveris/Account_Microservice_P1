@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @CrossOrigin(origins = "*", methods = { RequestMethod.POST, RequestMethod.GET, RequestMethod.PUT,
         RequestMethod.DELETE })
@@ -31,6 +33,11 @@ public class AccountController {
     @PutMapping(value = "updateAmount/{accountId}")
     public ResponseAccountDto updateAmount(@Validated @RequestBody TransactionDto dto, @PathVariable String accountId) throws  Exception{
         return accountService.updateAmount(dto,accountId);
+    }
+
+    @GetMapping("consultAccountByAccountNumber/{accountNumber}")
+    public List<TransactionDto> consultAccount(@PathVariable String accountNumber) throws  Exception{
+        return accountService.consultAccount(accountNumber);
     }
 
 }

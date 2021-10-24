@@ -1,6 +1,7 @@
 package com.microservice.account.services.impl;
 
 import com.microservice.account.client.CustomerServiceClient;
+import com.microservice.account.client.TransactionServiceClient;
 import com.microservice.account.config.AppConfig;
 import com.microservice.account.entities.Account;
 import com.microservice.account.entities.AccountType;
@@ -11,6 +12,7 @@ import org.bson.types.ObjectId;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +25,9 @@ public class AccountServiceImpl implements com.microservice.account.services.IAc
 
     @Autowired
     private CustomerServiceClient customerClient;
+
+    @Autowired
+    private TransactionServiceClient transactionClient;
 
     @Autowired
     private IAccountRepository accountRepository;
@@ -125,5 +130,18 @@ public class AccountServiceImpl implements com.microservice.account.services.IAc
         ResponseAccountDto response = modelMapper.map(account,ResponseAccountDto.class);
 
         return response;
+    }
+
+    @Override
+    @Transactional
+    public List<TransactionDto> consultAccount(String accountNumber) throws Exception {
+        Account account = accountRepository.findAccountByAccountNumber(accountNumber)
+                .orElseThrow(()->new Exception("ACCOUNT_NOT_FOUND"));
+
+        //Get transactions
+        List<TransactionDto> transactions = transactionClient.findTransactionsByAccountId(account.get_id().toString());
+
+        return  transactions;
+
     }
 }

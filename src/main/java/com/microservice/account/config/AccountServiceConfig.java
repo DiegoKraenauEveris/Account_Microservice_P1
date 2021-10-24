@@ -15,6 +15,9 @@ public class AccountServiceConfig {
     @Value("${customerservice.url}")
     private String customerServiceUrl;
 
+    @Value("${transactionservice.url}")
+    private String transactionServiceUrl;
+
     @Bean
     public ModelMapper modelMapper(){
         return new ModelMapper();
