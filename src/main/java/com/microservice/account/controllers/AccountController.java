@@ -1,11 +1,13 @@
 package com.microservice.account.controllers;
 
-import com.microservice.account.entities.Account;
 import com.microservice.account.entities.dtos.ConsultAccountDto;
 import com.microservice.account.entities.dtos.CreateAccountDto;
 import com.microservice.account.entities.dtos.ResponseAccountDto;
 import com.microservice.account.entities.dtos.TransactionDto;
 import com.microservice.account.services.IAccountService;
+
+import reactor.core.publisher.Mono;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -22,23 +24,23 @@ public class AccountController {
     IAccountService accountService;
 
     @PostMapping()
-    public ResponseAccountDto createAccount(@Validated @RequestBody CreateAccountDto dto) throws  Exception{
-        return accountService.createAccount(dto);
+    public Mono<ResponseAccountDto> createAccount(@Validated @RequestBody CreateAccountDto dto) throws Exception {
+        return Mono.just(accountService.createAccount(dto));
     }
 
     @GetMapping(value = "findByAccountNumber/{accountNumber}")
-    public ResponseAccountDto findAccountByAccountNumber(@PathVariable String accountNumber) throws  Exception{
-        return accountService.findAccountByAccountNumber(accountNumber);
+    public Mono<ResponseAccountDto> findAccountByAccountNumber(@PathVariable String accountNumber) throws Exception {
+        return Mono.just(accountService.findAccountByAccountNumber(accountNumber));
     }
 
     @PutMapping(value = "updateAmount/{accountId}")
-    public ResponseAccountDto updateAmount(@Validated @RequestBody TransactionDto dto, @PathVariable String accountId) throws  Exception{
-        return accountService.updateAmount(dto,accountId);
+    public Mono<ResponseAccountDto> updateAmount(@Validated @RequestBody TransactionDto dto, @PathVariable String accountId) throws Exception {
+        return Mono.just(accountService.updateAmount(dto,accountId));
     }
 
     @GetMapping("consultAccountByAccountNumber/{accountNumber}")
-    public ConsultAccountDto consultAccount(@PathVariable String accountNumber) throws  Exception{
-        return accountService.consultAccount(accountNumber);
+    public Mono<ConsultAccountDto> consultAccount(@PathVariable String accountNumber) throws Exception {
+        return Mono.just(accountService.consultAccount(accountNumber));
     }
 
 }

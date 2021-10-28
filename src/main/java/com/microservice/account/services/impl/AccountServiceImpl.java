@@ -151,6 +151,7 @@ public class AccountServiceImpl implements com.microservice.account.services.IAc
                 .orElseThrow(()->new Exception("ACCOUNT_NOT_FOUND"));
 
         //Get transactions
+        System.out.println(account.get_id().toString());
         List<TransactionDto> transactions = transactionClient.findTransactionsByAccountId(account.get_id().toString());
         ConsultAccountDto response = ConsultAccountDto.builder()
                 .balance(account.getBalance())
