@@ -48,7 +48,7 @@ public class AccountServiceImpl implements com.microservice.account.services.IAc
         return card.toString();
     }
     
-    private boolean validatePersonalVipAccount(CreateAccountDto dto, List<ResponseCustomerDto> customers) throws Exception {
+    private boolean validateCustomerHaveCreditCard(CreateAccountDto dto, List<ResponseCustomerDto> customers) throws Exception {
     	
     	if(customers.size() > 0) { // Si alguno de los clientes ya existe, verificar que tenga tarjeta de crédito
     		List<ObjectId> customersId = new ArrayList<>();
@@ -69,6 +69,16 @@ public class AccountServiceImpl implements com.microservice.account.services.IAc
         	return false;
         }
 	}
+    
+    public void validateSpecialAccount(CreateAccountDto dto, List<ResponseCustomerDto> customers, String customerType, String accountType) throws Exception {
+    	// Si hay al menos un cliente personal_vip y se crea una cuenta tipo "ahorro"
+        if(dto.getCustomers().stream().filter(customer -> customer.getType().getName().equals(customerType)).count() > 0
+        		&& dto.getAccount().getType().equals(accountType)) {
+        	if(!validateCustomerHaveCreditCard(dto, customers)) { // Si no tiene tarjeta de crédito  == false
+        		throw new Exception("No es posible crear la cuenta de tipo " + accountType); 
+        	}
+        }; // Si tiene qué continue con la creación de la cuenta
+    }
 
     @Override
     public ResponseAccountDto createAccount(CreateAccountDto dto) throws Exception {
@@ -83,14 +93,9 @@ public class AccountServiceImpl implements com.microservice.account.services.IAc
         //Customers that exists
         customers = customerClient.findCustomerByDni(dnis);
         
-        // Si hay al menos un cliente personal_vip y se crea una cuenta tipo "ahorro"
-        if(dto.getCustomers().stream().filter(customer -> customer.getType().getName().equals("PERSONAL_VIP")).count() > 0
-        		&& dto.getAccount().getType().equals("AHORRO")) {
-        	if(!validatePersonalVipAccount(dto, customers)) { // Si no tiene tarjeta de crédito  == false
-        		throw new Exception("NO SE PUEDE CREAR CUENTA PERSONAL VIP."); 
-        	}
-        }; // Si tiene qué continue con la creación de la cuenta
-        
+        //Validate business rules
+        validateSpecialAccount(dto, customers, "PERSONAL_VIP", "AHORRO");
+        validateSpecialAccount(dto, customers, "EMPRESARIAL_PYME", "CORRIENTE");
         
         //Clear dnis and add only dnis of customers found
         dnis.clear();
