@@ -70,7 +70,9 @@ public class AccountServiceImpl implements com.microservice.account.services.IAc
         }
 	}
     
-    public void validateSpecialAccount(CreateAccountDto dto, List<ResponseCustomerDto> customers, String customerType, String accountType) throws Exception {
+    public void validateSpecialAccount(CreateAccountDto dto, List<ResponseCustomerDto> customers, String customerType, 
+    		String accountType) throws Exception {
+    	
     	// Si hay al menos un cliente personal_vip y se crea una cuenta tipo "ahorro"
         if(dto.getCustomers().stream().filter(customer -> customer.getType().getName().equals(customerType)).count() > 0
         		&& dto.getAccount().getType().equals(accountType)) {
@@ -78,6 +80,7 @@ public class AccountServiceImpl implements com.microservice.account.services.IAc
         		throw new Exception("No es posible crear la cuenta de tipo " + accountType); 
         	}
         }; // Si tiene qué continue con la creación de la cuenta
+    
     }
 
     @Override
@@ -128,11 +131,15 @@ public class AccountServiceImpl implements com.microservice.account.services.IAc
             signersIds.add(finalSigner.get_id());
         });
         
-        //Create account
+        //Create account - Si es del tipo especial y llego hasta aquí es porque paso todas las condiciones
         Optional<AccountType> accTypeOptional = appConfig.getAccountTypeByName(dto.getAccount().getType());
         
         if(accTypeOptional.isPresent()){ ;
-            AccountType accountType = accTypeOptional.get();
+        	
+        	AccountType accountType = accTypeOptional.get();
+        	if(dto.getAccount().getType().equals("EMPRESARIAL_PYME")) { accountType.setCommissions(0.0); }
+        	if(dto.getAccount().getType().equals("PERSONAL_VIP")) { } //Promedio por mes??? 
+        	
             Account account = Account.builder()
                     .balance(0.00)
                     .accountNumber(createRandomAccountNumber())
@@ -166,11 +173,11 @@ public class AccountServiceImpl implements com.microservice.account.services.IAc
         //Update amount
         switch (dto.getTransactionType()){
             case "DEPOSITO":
-                account.setBalance(account.getBalance() + dto.getAmount());
+                account.setBalance(account.getBalance() + dto.getAmount() - (dto.getAmount()*dto.getCommission()));
                 accountRepository.save(account);
                 break;
             case "RETIRO":
-                account.setBalance(account.getBalance() - dto.getAmount());
+                account.setBalance(account.getBalance() - dto.getAmount() - (dto.getAmount()*dto.getCommission()));
                 accountRepository.save(account);
                 break;
         }

@@ -11,7 +11,9 @@ import lombok.NoArgsConstructor;
 @Builder
 public class TransactionDto {
     private Double amount;
-
+    
+    private Double commission;
+    
     private String transactionType;
 
     private String accountId;
