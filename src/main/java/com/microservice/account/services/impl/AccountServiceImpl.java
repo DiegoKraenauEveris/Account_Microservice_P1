@@ -47,6 +47,28 @@ public class AccountServiceImpl implements com.microservice.account.services.IAc
         }
         return card.toString();
     }
+    
+    private boolean validatePersonalVipAccount(CreateAccountDto dto, List<ResponseCustomerDto> customers) throws Exception {
+    	
+    	if(customers.size() > 0) { // Si alguno de los clientes ya existe, verificar que tenga tarjeta de crédito
+    		List<ObjectId> customersId = new ArrayList<>();
+        	customers.forEach(customer -> { customersId.add(customer.get_id()); });
+        	
+        	List<ResponseAccountDto> result = findAccountByCustomersIdsIn(customersId).stream()
+        				.filter(acc -> acc.getAccountType().getType().equals("TARJETA_CREDITO")).toList();
+        		
+        	if(result.size() > 0) {
+        		return true;
+        	} else {
+        		log.info("Alguno de los clientes existentes no posee una tarjeta de crédito.");
+        		return false;
+        	}
+        } else {
+        	// Else si todos son nuevos, indicar que alguno se cree una tarjeta de credito primero
+        	log.info("Crearse una tarjeta de crédito primero para acceder a la cuenta ahorro vip.");
+        	return false;
+        }
+	}
 
     @Override
     public ResponseAccountDto createAccount(CreateAccountDto dto) throws Exception {
@@ -54,13 +76,22 @@ public class AccountServiceImpl implements com.microservice.account.services.IAc
 
         //Make dni array
         List<String> dnis = new ArrayList<>();
+        boolean specialAccount = false;
         dto.getCustomers().forEach(customer->{
             dnis.add(customer.getDni());
         });
-
+        
         //Customers that exists
         customers = customerClient.findCustomerByDni(dnis);
-
+        
+        // Si hay al menos un cliente personal_vip y se crea una cuenta tipo "ahorro"
+        if(dto.getCustomers().stream().filter(customer -> customer.getType().getName().equals("PERSONAL_VIP")).count() > 0
+        		&& dto.getAccount().getType().equals("AHORRO")) {
+        	if(!validatePersonalVipAccount(dto, customers)) { // Si no tiene tarjeta de crédito  == false
+        		throw new Exception("NO SE PUEDE CREAR CUENTA PERSONAL VIP."); 
+        	}
+        }; // Si tiene qué continue con la creación de la cuenta
+        
         //Clear dnis and add only dnis of customers found
         dnis.clear();
         customers.forEach(customer->{
@@ -91,10 +122,10 @@ public class AccountServiceImpl implements com.microservice.account.services.IAc
         signers.forEach(finalSigner->{
             signersIds.add(finalSigner.get_id());
         });
-
+        
         //Create account
         Optional<AccountType> accTypeOptional = appConfig.getAccountTypeByName(dto.getAccount().getType());
-
+        
         if(accTypeOptional.isPresent()){ ;
             AccountType accountType = accTypeOptional.get();
             Account account = Account.builder()
@@ -161,4 +192,19 @@ public class AccountServiceImpl implements com.microservice.account.services.IAc
         return  response;
 
     }
+
+	@Override
+	public List<ResponseAccountDto> findAccountByCustomersIdsIn(List<ObjectId> customersIds) throws Exception {
+		List<Account> accounts = accountRepository.findAccountByCustomersIdsIn(customersIds);
+		List<ResponseAccountDto> response = new ArrayList<>();
+		accounts.forEach(account -> {
+			response.add(modelMapper.map(account, ResponseAccountDto.class));
+		});
+//                .orElseThrow(() -> new Exception("ACCOUNT_NOT_FOUND"));
+//        ResponseAccountDto response =  modelMapper.map(account,ResponseAccountDto.class);
+//        return response;
+		return response;
+	}
+	
+	
 }
