@@ -76,7 +76,6 @@ public class AccountServiceImpl implements com.microservice.account.services.IAc
 
         //Make dni array
         List<String> dnis = new ArrayList<>();
-        boolean specialAccount = false;
         dto.getCustomers().forEach(customer->{
             dnis.add(customer.getDni());
         });
@@ -91,6 +90,7 @@ public class AccountServiceImpl implements com.microservice.account.services.IAc
         		throw new Exception("NO SE PUEDE CREAR CUENTA PERSONAL VIP."); 
         	}
         }; // Si tiene qué continue con la creación de la cuenta
+        
         
         //Clear dnis and add only dnis of customers found
         dnis.clear();
