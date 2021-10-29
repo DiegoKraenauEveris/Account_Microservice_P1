@@ -172,11 +172,11 @@ public class AccountServiceImpl implements com.microservice.account.services.IAc
                 .orElseThrow(()->new Exception("ACCOUNT_NOT_FOUND"));
         //Update amount
         switch (dto.getTransactionType()){
-            case "DEPOSITO":
+            case "DEPOSITO": case "TRANSFER_ENVIO":
                 account.setBalance(account.getBalance() + dto.getAmount() - (dto.getAmount()*dto.getCommission()));
                 accountRepository.save(account);
                 break;
-            case "RETIRO":
+            case "RETIRO": case "TRANSFER_RECIBIDO":
                 account.setBalance(account.getBalance() - dto.getAmount() - (dto.getAmount()*dto.getCommission()));
                 accountRepository.save(account);
                 break;
