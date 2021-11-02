@@ -115,7 +115,7 @@ public class AccountServiceImpl implements com.microservice.account.services.IAc
 
     @Override
     public ResponseAccountDto findAccountByAccountNumber(String accountNumber) throws Exception {
-
+        log.info("ENTRANDO");
         Account account = accountRepository.findAccountByAccountNumber(accountNumber)
                 .orElseThrow(() -> new Exception("ACCOUNT_NOT_FOUND"));
         ResponseAccountDto response =  modelMapper.map(account,ResponseAccountDto.class);

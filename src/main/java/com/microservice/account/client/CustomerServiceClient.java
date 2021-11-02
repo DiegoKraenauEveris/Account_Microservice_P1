@@ -5,6 +5,7 @@ import com.microservice.account.entities.dtos.CustomerDto;
 import com.microservice.account.entities.dtos.ResponseCustomerDto;
 import com.microservice.account.entities.dtos.ResponseSignerDto;
 import com.microservice.account.entities.dtos.SignerDto;
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -23,6 +24,7 @@ import java.util.Optional;
 @Component
 public class CustomerServiceClient {
 
+//    private static final String CUSTOMER_SERVICE = "customerService";
     @Autowired
     RestTemplate restTemplate;
 
@@ -65,7 +67,6 @@ public class CustomerServiceClient {
         return result;
     }
 
-
     public List<ResponseCustomerDto> findCustomerByDni(List<String> dnis){
         List<ResponseCustomerDto> result = new ArrayList<>();
         try{
@@ -84,6 +85,7 @@ public class CustomerServiceClient {
         }
         return result;
     }
+
 
 
 }

@@ -1,0 +1,17 @@
+version: '3.3'
+services:
+  ##Account microservice
+  backend:
+    container_name: account_microservice
+    ports:
+      - 8082:8082
+    build:
+      context: .
+    networks:
+      configserver_p1_bootcamp:
+        ipv4_address: 172.20.0.7
+
+## Networking
+networks:
+  configserver_p1_bootcamp:
+    external: true
