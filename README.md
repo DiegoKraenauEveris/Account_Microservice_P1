@@ -4,11 +4,9 @@ I´m Diego Kraenau, a software engenieer student. In this repository you will fi
 
 ## Documentation
 
-Firts of all, you will need to download the [Endpoints](https://drive.google.com/file/d/1cxsmiB8yKuqgMcmo4c_9MPfvkZ3nppgz/view?usp=sharing) and then you will need to import it on the postman.
+Firts of all, you will need to download the [Endpoints](https://drive.google.com/file/d/1syET_MUYuCLY41rrA7FvWOxcpka9BZMA/view?usp=sharing) and then you will need to import it on the postman.
 
-In the next step, you will need to start the ConfigServer and then start the remaining microservices.Before it, you will need to 
-create the databases on mongodb. You can find the names in ConfigRepo, you will see the repositories below :
-
+In the next step, you will need to start the ConfigServer and then start the remaining microservices with the command "docker-compose up" in each project.
 
 - [ConfigRepo](https://github.com/DiegoKraenauEveris/ConfigRepo)
 - [ConfigServer](https://github.com/DiegoKraenauEveris/ConfigServer_P1)
@@ -20,14 +18,15 @@ create the databases on mongodb. You can find the names in ConfigRepo, you will 
 
 ## Microservices Reference
 
-| Microservice | Port     |
-| :-------- | :------- |
-| Gateway      | 8080 |
-| Eureka      | 8099 |
-| ConfigServer      | 8888 |
-| CustomerMicroservice      | 8081 |
-| AccountMicroservice      | 8082 |
-| TransactionMicroservice      | 8083 |
+| Microservice | Port in local machine    | IP in docker container    | Port in docker container | IP in local machine |
+| :-------- | :------- | :------- | :------- | :------- |
+| MongoServer      | 28017 | 172.20.0.3| 27017| localhost|
+| Gateway      | 8080 | 172.20.0.5| 8080| localhost|
+| Eureka      | 8761 | 172.20.0.4| 8761| localhost|
+| ConfigServer      | 8888 | 172.20.0.2| 8888| localhost|
+| CustomerMicroservice      | 8081 | 172.20.0.6| 8081| localhost|
+| AccountMicroservice      | 8082 | 172.20.0.7| 8082| localhost|
+| TransactionMicroservice      | 8083 | 172.20.0.8| 8083| localhost|
 
 After you start the microservices, you can use the endpoints that you imported on the postman, to recreate the process of the project you can see main endpoints 
 
